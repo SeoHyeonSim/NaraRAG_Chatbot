@@ -7,12 +7,15 @@ import Image from "next/image";
 import { redirect, usePathname } from "next/navigation";
 import LoginModal from "./login-modal";
 
+import { useDarkMode } from "@/contexts/darkmode-context";
+
 interface NavBarProps {
     chatrooms: ChatRoom[];
     createChatroom: () => void;
     deleteChatroom: (id: string) => void;
     renameChatroom: (id: string, newName: string) => void;
 }
+
 
 const NavBar: React.FC<NavBarProps> = ({
     chatrooms,
@@ -23,6 +26,7 @@ const NavBar: React.FC<NavBarProps> = ({
     const pathname = usePathname();
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const {isDarkMode} = useDarkMode()
 
     // 현재 경로에서 chatroomId 추출
     const activeChatroomName = useMemo(() => {
@@ -51,7 +55,9 @@ const NavBar: React.FC<NavBarProps> = ({
 
     return (
         <div
-            className="fixed w-full flex  border-b bg-gray-50 px-3 pt-2 pb-4 rounded-b-[15]"
+            className={`fixed w-full flex border-b  px-3 pt-2 pb-4 rounded-b-[15] ${
+                isDarkMode ? "bg-gray-900 text-white" : "bg-slate-100"
+            }`}
             style={{
                 boxShadow: `0 1.2px 3px 0 rgba(0,0,0,0.2)`,
             }}

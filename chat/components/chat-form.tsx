@@ -34,7 +34,7 @@ const ChatForm = ({
                 disabled={isLoading}
                 value={input}
                 onChange={handleInputChange}
-                placeholder="Talk with your companion"
+                placeholder="국회 회의록에 대해 무엇이 궁금하신가요?"
                 className="rounded-lg bg-slate-200
                 "
             />

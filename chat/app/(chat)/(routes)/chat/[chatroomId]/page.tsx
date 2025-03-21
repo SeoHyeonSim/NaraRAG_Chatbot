@@ -14,10 +14,6 @@ const ChatRoomPage = async ({ params }: ChatPageProps) => {
     try {
         const { chatroomId } = await params;
 
-        if (!chatroomId) {
-            redirect("/");
-        }
-
         let chatroom = null;
 
         if (chatroomId === "guest") {
@@ -41,7 +37,7 @@ const ChatRoomPage = async ({ params }: ChatPageProps) => {
                 },
             });
 
-            if (!chatroom) {
+            if (!chatroom && chatroomId !== "guest") {
                 redirect("/");
             }
         }

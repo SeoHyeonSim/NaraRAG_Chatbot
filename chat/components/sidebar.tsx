@@ -1,6 +1,13 @@
 "use client";
 
-import { Inbox, PenBox, Settings, Sidebar } from "lucide-react";
+import {
+    Inbox,
+    MoonIcon,
+    PenBox,
+    Settings,
+    Sidebar,
+    SunIcon,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 import ChatroomList from "./chatroom-list";
 import { useRouter } from "next/navigation";
@@ -8,6 +15,8 @@ import ConfirmModal from "./modal";
 
 import { ChatRoom } from "@prisma/client";
 import RenameModal from "./rename-modal";
+
+import { useDarkMode } from "../contexts/darkmode-context";
 
 interface SideBarProps {
     chatrooms: ChatRoom[];
@@ -32,9 +41,16 @@ const SideBar: React.FC<SideBarProps> = ({
     const [selectedChatroom, setSelectedChatroom] = useState<ChatRoom | null>(
         null
     );
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+    const { isDarkMode, toggleDarkMode } = useDarkMode();
 
     const toggleSidebar = () => {
         setIsExpanded((prev) => !prev);
+    };
+
+    const toggleSettings = () => {
+        setIsSettingsOpen((prev) => !prev);
     };
 
     // 채팅방 삭제 모달 열기/닫기
@@ -77,14 +93,20 @@ const SideBar: React.FC<SideBarProps> = ({
     const handleOutsideClick = (event: MouseEvent) => {
         const sidebar = document.getElementById("sidebar");
         const renameModal = document.getElementById("rename-modal");
+        const settingsMenu = document.getElementById("settings-menu");
+        const darkModeButton = document.getElementById("dark-mode-button");
 
         if (
             sidebar &&
             !sidebar.contains(event.target as Node) &&
+            (!settingsMenu || !settingsMenu.contains(event.target as Node)) &&
             (!renameModal || !renameModal.contains(event.target as Node)) &&
+            (!darkModeButton ||
+                !darkModeButton.contains(event.target as Node)) &&
             !isRenameModalOpen // RenameModal 열려 있으면 닫지 않음
         ) {
             setIsExpanded(false);
+            setIsSettingsOpen(false);
         }
     };
 
@@ -95,7 +117,7 @@ const SideBar: React.FC<SideBarProps> = ({
             // 컴포넌트 언마운트 시 이벤트 리스너 제거
             document.removeEventListener("click", handleOutsideClick);
         };
-    }, [isRenameModalOpen]);
+    }, [isRenameModalOpen, isSettingsOpen]);
 
     return (
         <div
@@ -152,16 +174,54 @@ const SideBar: React.FC<SideBarProps> = ({
                     </div>
 
                     {/* setting */}
-                    <div className="group absolute bottom-6  ">
-                        <button className="cursor-pointer hover:text-blue-300 transition-colors">
-                            <Settings color="white" size={30} />
-                        </button>
-                        <span className="absolute left-[40px] top-[15px] transform -translate-y-1/2 hidden group-hover:block bg-gray-800 text-white text-sm px-2 py-1 rounded-lg shadow-lg">
+                    <div className="group absolute bottom-7">
+                        <div className="rounded-full flex">
+                            <button
+                                className={`cursor-pointer hover:text-blue-300 transition-transform ${
+                                    isSettingsOpen ? "rotate-180" : "rotate-0"
+                                }`}
+                                onClick={toggleSettings}
+                            >
+                                <Settings color="white" size={30} />
+                            </button>
+
+                            {isSettingsOpen && (
+                                <div
+                                    className="absolute -bottom-3 left-14 bg-sky-100 w-40 h-14 rounded-r-md"
+                                    id="settings-menu"
+                                >
+                                    <div className="px-2 py-1 flex gap-2">
+                                        <div className="bg-blue-400 w-12 h-12 rounded-full hover:bg-blue-300">
+                                            <button
+                                                id="dark-mode-button"
+                                                className="py-[9] px-[9]"
+                                                onClick={toggleDarkMode}
+                                            >
+                                                {isDarkMode ? (
+                                                    <SunIcon
+                                                        color="white"
+                                                        size={30}
+                                                    />
+                                                ) : (
+                                                    <MoonIcon
+                                                        color="white"
+                                                        size={30}
+                                                    />
+                                                )}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <span className="absolute left-[-17px] bottom-[25px] transform -translate-y-1/2 hidden group-hover:block bg-gray-800 text-white text-sm px-2 py-1 rounded-lg shadow-lg">
                             Settings
                         </span>
                     </div>
                 </div>
             </div>
+
             <div>
                 <div
                     className={`bg-gradient-to-br from-[#cee3ff] via-[#cee4ff]  to-[#8dc0fe] overflow-y-auto h-full transition-all duration-500 ease-in-out z-10 ${

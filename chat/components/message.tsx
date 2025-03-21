@@ -172,8 +172,7 @@ const ChatMessage = ({
             {role !== "user" && <BotAvatar />}
             <div
                 className={cn(
-                    `mt-[3] rounded-md px-5 py-4 max-w-lg text-sm bg-gradient-to-b from-slate-200 to-slate-100  transition-all duration-300 shadow-md break-words`,
-                    "animate-expand-height"
+                    `mt-[3] rounded-md px-5 py-4 max-w-lg text-sm bg-gradient-to-b from-slate-200 to-slate-100  transition-all duration-300 shadow-md break-words`
                 )}
             >
                 {isLoading ? (

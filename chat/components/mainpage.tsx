@@ -40,6 +40,7 @@ const MainPage = () => {
 
             const newChatroom: ChatRoom = await response.json();
             createChatroom(newChatroom);
+            
             router.push(`/chat/${newChatroom.id}`);
         } catch (error) {
             console.error("Error creating chatroom:", error);

@@ -23,28 +23,19 @@ from langchain.chains.history_aware_retriever import create_history_aware_retrie
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 
-# -----------------------------
-# 환경 변수 로드
-# -----------------------------
 load_dotenv()
 
-# -----------------------------
-# FastAPI 초기화 + CORS 설정
-# -----------------------------
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 필요에 따라 특정 도메인만 허용
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
-# -----------------------------
-# 데이터 모델 정의
-# -----------------------------
 class ChatRequest(BaseModel):
     input: str
     chat_history: List[Dict[str, str]]  # {"role": "user"|"assistant", "content": str}
@@ -55,9 +46,6 @@ class ChatResponse(BaseModel):
     context: str
 
 
-# -----------------------------
-# RAG 구성 (Streamlit 코드에서 옮겨옴)
-# -----------------------------
 # 1) ChromaDB 로드
 vectorstore = Chroma(
     collection_name="split_parents",
@@ -130,9 +118,7 @@ question_answer_chain = create_stuff_documents_chain(chat, qa_prompt)
 rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
 
 
-# -----------------------------
 # API 엔드포인트
-# -----------------------------
 @app.post("/api/chat/{chatroom_id}/messages", response_model=ChatResponse)
 async def chat_endpoint(chatroom_id: str, request: ChatRequest):
     try:
@@ -160,7 +146,7 @@ async def chat_endpoint(chatroom_id: str, request: ChatRequest):
         elif not isinstance(context, str):
             context = str(context)
 
-        print("RAG result:", result)  # 디버그용
+        print("RAG result:", result)  
 
         # 결과 반환
         return ChatResponse(

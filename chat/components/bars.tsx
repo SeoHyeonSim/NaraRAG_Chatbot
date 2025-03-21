@@ -6,6 +6,7 @@ import SideBar from "./sidebar";
 
 import { useRouter } from "next/navigation";
 import { useChatroomStore } from "@/store/chatroomStore";
+import { DarkModeProvider } from "@/contexts/darkmode-context";
 
 const Bars = () => {
     const router = useRouter();
@@ -37,25 +38,27 @@ const Bars = () => {
         renameChatroom(id, newName);
 
     return (
-        <div className="z-10">
-            <div className="fixed">
-                <NavBar
-                    chatrooms={chatrooms}
-                    createChatroom={handleCreateChatroom}
-                    deleteChatroom={handleDeleteChatroom}
-                    renameChatroom={handleRenameChatroom}
-                />
-            </div>
+        <DarkModeProvider>
+            <div className="z-10">
+                <div className="fixed">
+                    <NavBar
+                        chatrooms={chatrooms}
+                        createChatroom={handleCreateChatroom}
+                        deleteChatroom={handleDeleteChatroom}
+                        renameChatroom={handleRenameChatroom}
+                    />
+                </div>
 
-            <div className="mt-[72px] fixed inset-y-0">
-                <SideBar
-                    chatrooms={chatrooms}
-                    createChatroom={handleCreateChatroom}
-                    deleteChatroom={handleDeleteChatroom}
-                    renameChatroom={handleRenameChatroom}
-                />
+                <div className="mt-[72px] fixed inset-y-0">
+                    <SideBar
+                        chatrooms={chatrooms}
+                        createChatroom={handleCreateChatroom}
+                        deleteChatroom={handleDeleteChatroom}
+                        renameChatroom={handleRenameChatroom}
+                    />
+                </div>
             </div>
-        </div>
+        </DarkModeProvider>
     );
 };
 

@@ -44,7 +44,7 @@ const ChatClient = ({ chatroom }: ChatClientProps) => {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
-            if (res.status === 404) {
+            if (res.status === 404 && chatroom.id !== "guest") {
                 // 채팅방이 없으면 메인 페이지로 리다이렉트
                 router.push("/");
                 return;
@@ -131,7 +131,7 @@ const ChatClient = ({ chatroom }: ChatClientProps) => {
 
     return (
         <div className="flex flex-col h-full mx-4 flex-1">
-            <div className="flex flex-col align-middle items-center justify-center -z-40 absolute inset-0">
+            <div className="flex flex-col align-middle items-center justify-center -z-40 absolute inset-0 bg-slate-50">
                 <Image
                     src="/images/nararag-logo.png"
                     alt="NaraRAG"

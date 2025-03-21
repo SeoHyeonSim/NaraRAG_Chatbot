@@ -33,8 +33,6 @@ const ChatMessages = ({
         }
     }, [fakeLoading]);
 
-    // 새 메시지 식별
-
     // 스크롤 자동 이동
     useEffect(() => {
         scrollRef?.current?.scrollIntoView({ behavior: "smooth" });

@@ -38,13 +38,11 @@ export const ChatroomProvider: React.FC<{ children: React.ReactNode }> = ({
         options: RequestInit = {}
     ): Promise<Response> => {
         const token = localStorage.getItem("token");
-        if (!token) {
-            await new Promise((resolve) => setTimeout(resolve, 500)); // 0.5초 대기
 
-            const retryToken = localStorage.getItem("token");
-            if (!retryToken) {
-                throw new Error("로그인 정보가 없습니다. 다시 로그인해주세요.");
-            }
+        // 토큰이 없으면 바로 게스트 상태로 처리
+        if (!token) {
+            console.warn("로그인 정보가 없습니다. 게스트 모드로 전환합니다.");
+            return null;
         }
         return fetch(url, {
             ...options,
@@ -59,7 +57,15 @@ export const ChatroomProvider: React.FC<{ children: React.ReactNode }> = ({
     const fetchChatrooms = async () => {
         try {
             const response = await fetchWithAuth("/api/chat");
+
+            if (!response) {
+                console.warn("게스트 상태로 채팅방 목록 로드 안 함.");
+                setChatrooms([]);
+                return;
+            }
+
             if (!response.ok) throw new Error("Failed to fetch chatrooms");
+
             const data = await response.json();
             setChatrooms(data);
         } catch (error) {
@@ -88,7 +94,13 @@ export const ChatroomProvider: React.FC<{ children: React.ReactNode }> = ({
                 method: "POST",
                 body: JSON.stringify({ name: "New Chat Room" }),
             });
+
+            if (!response) {
+                throw new Error("Failed to create chatroom (no response)");
+            }
+
             if (!response.ok) throw new Error("Failed to create chatroom");
+
             const newChatroom: ChatRoom = await response.json();
             setChatrooms((prev) => [...prev, newChatroom]);
             router.push(`/chat/${newChatroom.id}`);
@@ -116,7 +128,13 @@ export const ChatroomProvider: React.FC<{ children: React.ReactNode }> = ({
                 method: "PATCH",
                 body: JSON.stringify({ name: newName }),
             });
+
+            if (!response) {
+                throw new Error("Failed to rename chatroom (no response)");
+            }
+
             if (!response.ok) throw new Error("Failed to rename chatroom");
+
             const updatedChatroom: ChatRoom = await response.json();
             setChatrooms((prev) =>
                 prev.map((chatroom) =>

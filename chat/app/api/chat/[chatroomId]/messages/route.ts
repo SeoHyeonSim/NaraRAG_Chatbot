@@ -3,7 +3,7 @@ import prismadb from "@/lib/prismadb";
 import { NextRequest, NextResponse } from "next/server";
 import fetch from "node-fetch";
 
-// 🔄 POST 핸들러
+// POST 핸들러
 export async function POST(
     req: NextRequest,
     { params }: { params: { chatroomId: string } }
@@ -22,7 +22,7 @@ export async function POST(
             );
         }
 
-        // 🔄 guest 채팅방은 인증 불필요
+        // guest 채팅방은 인증 불필요
         let userId;
         if (chatroomId !== "guest") {
             userId = getUserIdFromRequest(req);
@@ -88,7 +88,7 @@ export async function POST(
 
         console.log("AI Response:", data);
 
-        // 🔄 guest 채팅방은 데이터베이스에 저장하지 않음
+        // guest 채팅방은 데이터베이스에 저장하지 않음
         if (chatroomId !== "guest") {
             await prismadb.message.create({
                 data: {
@@ -122,7 +122,7 @@ export async function POST(
     }
 }
 
-// 🔄 GET 핸들러
+// GET 핸들러
 export async function GET(
     req: NextRequest,
     { params }: { params: { chatroomId: string } }
@@ -139,7 +139,7 @@ export async function GET(
             );
         }
 
-        // 🔄 guest 채팅방은 인증 불필요
+        // guest 채팅방은 인증 불필요
         if (chatroomId === "guest") {
             return NextResponse.json({ messages: [] });
         }
